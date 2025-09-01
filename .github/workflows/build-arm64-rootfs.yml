@@ -34,14 +34,7 @@ jobs:
 
           ./scripts/feeds update -a
           ./scripts/feeds install -a
-
-      - name: Copy pre-config
-        run: |
           cp .github/immortalwrt-config .config
-          cd immortalwrt
-
-      - name: Build rootfs
-        run: |
           cd immortalwrt
           make defconfig
           make -j1 V=s image PROFILE=generic PACKAGES="" FILES=""
