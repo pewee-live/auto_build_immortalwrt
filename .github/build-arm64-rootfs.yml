@@ -1,0 +1,54 @@
+name: Build ImmortalWRT ARM64 RootFS
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch of ImmortalWRT'
+        default: 'master'
+
+jobs:
+  build-rootfs:
+    runs-on: ubuntu-latest
+    env:
+      ROOTFS_NAME: immortalwrt-arm64-rootfs.tar.gz
+
+    steps:
+      - name: Checkout workflow repo
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y git build-essential libncurses5-dev gawk \
+          gettext unzip file python3-distutils bc curl ccache
+
+      - name: Clone ImmortalWRT
+        run: |
+          git clone --depth 1 --branch ${{ github.event.inputs.branch }} https://github.com/immortalwrt/immortalwrt.git
+          cd immortalwrt
+
+          # 添加自定义 feeds
+          echo "src-git passwall https://github.com/xiaorouji/openwrt-passwall.git" >> feeds.conf.default
+          echo "src-git helloworld https://github.com/fw876/helloworld.git" >> feeds.conf.default
+
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+
+      - name: Copy pre-config
+        run: |
+          cp .github/immortalwrt-config .config
+          cd immortalwrt
+
+      - name: Build rootfs
+        run: |
+          cd immortalwrt
+          make defconfig
+          make -j$(nproc) image PROFILE=generic PACKAGES="" FILES=""
+          tar -czf $ROOTFS_NAME -C bin/targets/aarch64_generic/ .
+
+      - name: Upload RootFS
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ROOTFS_NAME }}
+          path: immortalwrt/$ROOTFS_NAME
