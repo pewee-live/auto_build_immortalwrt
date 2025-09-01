@@ -44,7 +44,7 @@ jobs:
         run: |
           cd immortalwrt
           make defconfig
-          make -j$(nproc) image PROFILE=generic PACKAGES="" FILES=""
+          make -j1 V=s image PROFILE=generic PACKAGES="" FILES=""
           tar -czf $ROOTFS_NAME -C bin/targets/aarch64_generic/ .
 
       - name: Upload RootFS
