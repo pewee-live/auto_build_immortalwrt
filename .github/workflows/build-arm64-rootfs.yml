@@ -39,7 +39,7 @@ jobs:
           ./scripts/feeds install -a
           make defconfig
           make -j$(nproc) download
-          make -j4
+          make -j$(nproc)
           if [ -d bin/targets/armsr/armv8 ]; then
               TAR_DIR=bin/targets/armsr/armv8
           elif [ -d bin/targets/aarch64_generic ]; then
