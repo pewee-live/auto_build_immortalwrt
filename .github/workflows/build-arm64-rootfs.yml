@@ -26,7 +26,7 @@ jobs:
       - name: Clone ImmortalWRT
         run: |
           git clone --depth 1 --branch ${{ github.event.inputs.branch }} https://github.com/immortalwrt/immortalwrt.git
-          cp .github/immortalwrt-config .config
+          cp .github/immortalwrt-config immortalwrt/.config
           cd immortalwrt
 
           # 添加自定义 feeds
@@ -39,7 +39,7 @@ jobs:
           ./scripts/feeds install -a
           make defconfig
           make -j$(nproc) download
-          make -j1 V=s
+          make -j4
           tar -czf $ROOTFS_NAME -C bin/targets/aarch64_generic/ .
 
       - name: Upload RootFS
