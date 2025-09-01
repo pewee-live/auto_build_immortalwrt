@@ -35,9 +35,11 @@ jobs:
 
           ./scripts/feeds update -a
           ./scripts/feeds install -a
-         
+          ./scripts/feeds update passwall helloworld
+          ./scripts/feeds install -a
           make defconfig
-          make -j1 V=s image PROFILE=generic PACKAGES="" FILES=""
+          make -j$(nproc) download
+          make -j1 V=s
           tar -czf $ROOTFS_NAME -C bin/targets/aarch64_generic/ .
 
       - name: Upload RootFS
