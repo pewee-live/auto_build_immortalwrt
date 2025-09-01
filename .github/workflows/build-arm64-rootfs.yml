@@ -40,8 +40,16 @@ jobs:
           make defconfig
           make -j$(nproc) download
           make -j4
-          tar -czf $ROOTFS_NAME -C bin/targets/aarch64_generic/ .
+          if [ -d bin/targets/armsr/armv8 ]; then
+              TAR_DIR=bin/targets/armsr/armv8
+          elif [ -d bin/targets/aarch64_generic ]; then
+              TAR_DIR=bin/targets/aarch64_generic
+          else
+              echo "ERROR: No target rootfs found"
+              exit 1
+          fi
 
+          tar -czf $ROOTFS_NAME -C $TAR_DIR .
       - name: Upload RootFS
         uses: actions/upload-artifact@v4
         with:
