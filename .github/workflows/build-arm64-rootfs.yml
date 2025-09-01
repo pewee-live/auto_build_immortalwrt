@@ -21,7 +21,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y git build-essential libncurses5-dev gawk \
-          gettext unzip file python3-distutils bc curl ccache
+          gettext unzip file bc curl ccache python3 python3-venv python3-pip python3-setuptools
 
       - name: Clone ImmortalWRT
         run: |
